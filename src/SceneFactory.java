@@ -4,6 +4,7 @@ import javafx.scene.Scene;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.control.Button;
+import javafx.scene.control.Label;
 import javafx.scene.effect.InnerShadow;
 import javafx.scene.image.ImageView;
 import javafx.scene.input.MouseEvent;
@@ -12,6 +13,9 @@ import javafx.scene.text.Font;
 import javafx.scene.text.Text;
 import javafx.stage.Stage;
 
+import java.io.FileWriter;
+import java.io.IOException;
+
 public class SceneFactory implements ISceneFactory
 {
     protected Stage stage;
@@ -19,6 +23,7 @@ public class SceneFactory implements ISceneFactory
 
     protected ImageView IV_PLAY_MAIN = new ImageView("file:res/play.png");
     protected ImageView IV_SETTINGS_MAIN = new ImageView("file:res/settings.png");
+    protected ImageView IV_DIFF_E = new ImageView("file:res/easydiff.png");
 
     public SceneFactory(Stage stage)
     {
@@ -39,10 +44,14 @@ public class SceneFactory implements ISceneFactory
         {
             case "settings":
                 Text settingsheading = createHeading("Settings", 100, 100);
-                root.getChildren().addAll(settingsheading);
+                Text settingsHeader = createSmallHeading("Please choose a difficulty:", 100, 300);
+                Button easyButton = createButton(IV_DIFF_E, 100, 350, 'e');
+
+                root.getChildren().addAll(settingsheading, settingsHeader, easyButton);
                 return scene;
             case "game":
                 Text playHeading = createHeading("Time to play!", 100, 100);
+
                 root.getChildren().addAll(playHeading);
                 return scene;
             case "main":
@@ -50,11 +59,62 @@ public class SceneFactory implements ISceneFactory
                 Text mainHeading = createHeading("Welcome to Maths Drop!", 100, 100);
                 Button playbtn = createButton(IV_PLAY_MAIN, 450, 350, 256, 64, "game");
                 Button settingsbtn = createButton(IV_SETTINGS_MAIN, 1064, 668, 128, 128, "settings");
+
                 root.getChildren().addAll(mainHeading, playbtn, settingsbtn);
                 return scene;
         }
     }
 
+    //buttons for changing setting values
+    private Button createButton(ImageView iv, int x, int y, char type)
+    {
+        Button btn = new Button();
+        btn.setGraphic(iv);
+        btn.setLayoutX(x);
+        btn.setLayoutY(y);
+        btn.setBackground(null);
+
+        btn.setOnMouseClicked(new EventHandler<MouseEvent>() {
+            @Override
+            public void handle(MouseEvent mouseEvent) {
+                changeValue(type);
+            }
+        });
+
+        return btn;
+    }
+
+    private void changeValue(char type)
+    {
+        try {
+            FileWriter fw = new FileWriter("settings.txt");
+            switch (type) {
+                case 'e':
+                    System.out.println("difficulty set to easy");
+                    fw.write('e');
+                    fw.close();
+                    break;
+                case 'n':
+                    System.out.println("difficulty set to normal");
+                    fw.write('n');
+                    fw.close();
+                    break;
+                case 'h':
+                    System.out.println("difficulty set to hard");
+                    fw.write('h');
+                    fw.close();
+                    break;
+                default:
+                    System.out.println("nothing");
+                    fw.close();
+                    break;
+            }
+        } catch(IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+    //butons for scene creation
     private Button createButton(ImageView iv, int x, int y, String destination)
     {
         Button btn = new Button();
@@ -84,7 +144,16 @@ public class SceneFactory implements ISceneFactory
     private Text createHeading(String s, int x, int y)
     {
         Text txt = new Text(x, y, s);
-        txt.setFont(Font.font("Comic Sans MS", 60));
+        txt.setFont(Font.font("Comic Sans MS", 64));
+        txt.setEffect(getInnerShadowEffect());
+
+        return txt;
+    }
+
+    private Text createSmallHeading(String s, int x, int y)
+    {
+        Text txt = new Text(x, y, s);
+        txt.setFont(Font.font("Comic Sans MS", 32));
         txt.setEffect(getInnerShadowEffect());
 
         return txt;

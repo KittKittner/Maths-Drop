@@ -1,5 +1,6 @@
 import javafx.event.EventHandler;
 import javafx.scene.Group;
+import javafx.scene.Node;
 import javafx.scene.Scene;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
@@ -13,27 +14,46 @@ import javafx.scene.text.Font;
 import javafx.scene.text.Text;
 import javafx.stage.Stage;
 
+import javax.swing.filechooser.FileSystemView;
+import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.io.InputStream;
+import java.util.HashMap;
 
 public class SceneFactory implements ISceneFactory
 {
     protected Stage stage;
     protected GraphicsContext gc;
+    protected Group root;
+    protected HashMap<String, Scene> sceneMap;
 
     protected ImageView IV_PLAY_MAIN = new ImageView("file:res/play.png");
     protected ImageView IV_SETTINGS_MAIN = new ImageView("file:res/settings.png");
     protected ImageView IV_DIFF_E = new ImageView("file:res/easydiff.png");
+    protected ImageView IV_DIFF_N = new ImageView("file:res/normdiff.png");
+    protected ImageView IV_DIFF_H = new ImageView("file:res/harddiff.png");
 
     public SceneFactory(Stage stage)
     {
         this.stage = stage;
     }
 
+    public HashMap<String, Scene> initSceneMap()
+    {
+        sceneMap = new HashMap<String, Scene>();
+        sceneMap.put("main", createScene("main"));
+        sceneMap.put("settings", createScene("settings"));
+        sceneMap.put("game", createScene("game"));
+
+        return sceneMap;
+    }
+
     public Scene createScene(String type)
     {
         //scene init
         Group root = new Group();
+        this.root = root;
         Scene scene = new Scene(root, 1200, 800);
         scene.setFill(Color.BLACK);
         Canvas canvas = new Canvas(1200, 800);
@@ -46,8 +66,10 @@ public class SceneFactory implements ISceneFactory
                 Text settingsheading = createHeading("Settings", 100, 100);
                 Text settingsHeader = createSmallHeading("Please choose a difficulty:", 100, 300);
                 Button easyButton = createButton(IV_DIFF_E, 100, 350, 'e');
+                Button normButton = createButton(IV_DIFF_N, 100, 420, 'n');
+                Button hardButton = createButton(IV_DIFF_H, 100, 490, 'h');
 
-                root.getChildren().addAll(settingsheading, settingsHeader, easyButton);
+                root.getChildren().addAll(settingsheading, settingsHeader, easyButton, normButton, hardButton);
                 return scene;
             case "game":
                 Text playHeading = createHeading("Time to play!", 100, 100);
@@ -65,7 +87,7 @@ public class SceneFactory implements ISceneFactory
         }
     }
 
-    //buttons for changing setting values
+    //buttons for changing external values
     private Button createButton(ImageView iv, int x, int y, char type)
     {
         Button btn = new Button();
@@ -87,34 +109,44 @@ public class SceneFactory implements ISceneFactory
     private void changeValue(char type)
     {
         try {
-            FileWriter fw = new FileWriter("settings.txt");
+            //create the file if it does not exist
+            File settings = new File(getMyDocs() + "\\settings.txt");
+            if(settings.createNewFile())
+                System.out.println("settings file made");
+            else
+                System.out.println("settings file exists");
+
+            //write the value to my documents
+            FileWriter fw = new FileWriter(settings.getAbsoluteFile());
+            fw.write(type);
+
+            //change the value to something recognisable
+            String diffFull = "";
             switch (type) {
                 case 'e':
-                    System.out.println("difficulty set to easy");
-                    fw.write('e');
-                    fw.close();
+                    diffFull = "easy";
                     break;
                 case 'n':
-                    System.out.println("difficulty set to normal");
-                    fw.write('n');
-                    fw.close();
+                    diffFull = "normal";
                     break;
                 case 'h':
-                    System.out.println("difficulty set to hard");
-                    fw.write('h');
-                    fw.close();
+                    diffFull = "hard";
                     break;
                 default:
-                    System.out.println("nothing");
-                    fw.close();
-                    break;
+                    throw new IllegalArgumentException();
             }
-        } catch(IOException e) {
+
+            //output the change to the current scene for the user
+            Text textDiff = createSmallHeading("Difficulty changed to " + diffFull, 400, 400);
+            root.getChildren().removeIf(obj -> obj instanceof Text && ((Text) obj).getText().contains("Difficulty"));
+            root.getChildren().add(textDiff);
+        } catch(IOException e)
+        {
             e.printStackTrace();
         }
     }
 
-    //butons for scene creation
+    //buttons for scene changes
     private Button createButton(ImageView iv, int x, int y, String destination)
     {
         Button btn = new Button();
@@ -126,7 +158,8 @@ public class SceneFactory implements ISceneFactory
         btn.setOnMouseClicked(new EventHandler<MouseEvent>() {
             @Override
             public void handle(MouseEvent mouseEvent) {
-                stage.setScene(createScene(destination));
+                stage.setScene(sceneMap.get(destination));
+                root = (Group) stage.getScene().getRoot();
             }
         });
 
@@ -169,4 +202,9 @@ public class SceneFactory implements ISceneFactory
         return is;
     }
 
+    /*Courtesy of user IvanRF (https://stackoverflow.com/questions/9677692/getting-my-documents-path-in-java)*/
+    public String getMyDocs()
+    {
+        return FileSystemView.getFileSystemView().getDefaultDirectory().getPath();
+    }
 }

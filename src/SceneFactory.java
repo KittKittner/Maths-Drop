@@ -137,7 +137,7 @@ public class SceneFactory implements ISceneFactory
             }
 
             //output the change to the current scene for the user
-            Text textDiff = createSmallHeading("Difficulty changed to " + diffFull, 400, 400);
+            Text textDiff = createSmallHeading("Difficulty changed to " + diffFull + ".", 400, 400);
             root.getChildren().removeIf(obj -> obj instanceof Text && ((Text) obj).getText().contains("Difficulty"));
             root.getChildren().add(textDiff);
         } catch(IOException e)

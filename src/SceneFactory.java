@@ -1,3 +1,4 @@
+import javafx.animation.AnimationTimer;
 import javafx.event.EventHandler;
 import javafx.scene.Group;
 import javafx.scene.Node;
@@ -8,6 +9,7 @@ import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.effect.InnerShadow;
 import javafx.scene.image.ImageView;
+import javafx.scene.input.KeyEvent;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.paint.Color;
 import javafx.scene.text.Font;
@@ -18,7 +20,6 @@ import javax.swing.filechooser.FileSystemView;
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
-import java.io.InputStream;
 import java.util.HashMap;
 
 public class SceneFactory implements ISceneFactory
@@ -55,10 +56,7 @@ public class SceneFactory implements ISceneFactory
         Group root = new Group();
         this.root = root;
         Scene scene = new Scene(root, 1200, 800);
-        scene.setFill(Color.BLACK);
-        Canvas canvas = new Canvas(1200, 800);
-        gc = canvas.getGraphicsContext2D();
-        root.getChildren().add(canvas);
+        scene.setFill(Color.SKYBLUE);
 
         switch(type)
         {
@@ -72,9 +70,24 @@ public class SceneFactory implements ISceneFactory
                 root.getChildren().addAll(settingsheading, settingsHeader, easyButton, normButton, hardButton);
                 return scene;
             case "game":
-                Text playHeading = createHeading("Time to play!", 100, 100);
+                Game game = Game.getInstance(root);
+                Player player = new Player();
+                game.addToSpriteList(player);
 
-                root.getChildren().addAll(playHeading);
+                scene.setOnKeyPressed(new EventHandler<KeyEvent>() {
+                    @Override
+                    public void handle(KeyEvent keyEvent) {
+                        player.setDirection(keyEvent.getCode());
+                    }
+                });
+                scene.setOnKeyReleased(new EventHandler<KeyEvent>() {
+                    @Override
+                    public void handle(KeyEvent keyEvent) {
+                        player.setDirection();
+                    }
+                });
+
+                root.getChildren().addAll(player.getSprite());
                 return scene;
             case "main":
             default:
@@ -112,13 +125,15 @@ public class SceneFactory implements ISceneFactory
             //create the file if it does not exist
             File settings = new File(getMyDocs() + "\\settings.txt");
             if(settings.createNewFile())
-                System.out.println("settings file made");
+                System.out.println("settings made");
             else
-                System.out.println("settings file exists");
+                System.out.println("settings exists");
 
             //write the value to my documents
             FileWriter fw = new FileWriter(settings.getAbsoluteFile());
             fw.write(type);
+            System.out.println("wrote to settings");
+            fw.close();
 
             //change the value to something recognisable
             String diffFull = "";

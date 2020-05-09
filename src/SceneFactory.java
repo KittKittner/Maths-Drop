@@ -9,6 +9,7 @@ import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.effect.InnerShadow;
 import javafx.scene.image.ImageView;
+import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyEvent;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.paint.Color;
@@ -74,16 +75,28 @@ public class SceneFactory implements ISceneFactory
                 Player player = new Player();
                 game.addToSpriteList(player);
 
+                //define key press actions for scene
                 scene.setOnKeyPressed(new EventHandler<KeyEvent>() {
                     @Override
                     public void handle(KeyEvent keyEvent) {
-                        player.setDirection(keyEvent.getCode());
+                        KeyCode code = keyEvent.getCode();
+                        if(code.isArrowKey() || code.isKeypadKey()) //move the player
+                            player.setDirection(keyEvent.getCode());
+                        else if(code.equals(KeyCode.P)) //pause tha game
+                            game.isActive(!game.isActive());
+                        else if(code.equals(KeyCode.Q)) { //quit to the menu (preserving the current game state)
+                            game.isActive(false);
+                            stage.setScene(sceneMap.get("main"));
+                        }
                     }
                 });
+                //define key release actions for scene
                 scene.setOnKeyReleased(new EventHandler<KeyEvent>() {
                     @Override
                     public void handle(KeyEvent keyEvent) {
-                        player.setDirection();
+                        KeyCode code = keyEvent.getCode();
+                        if(code.isArrowKey() || code.isKeypadKey()) //set direction impetus to 0
+                            player.setDirection();
                     }
                 });
 
@@ -175,6 +188,8 @@ public class SceneFactory implements ISceneFactory
             public void handle(MouseEvent mouseEvent) {
                 stage.setScene(sceneMap.get(destination));
                 root = (Group) stage.getScene().getRoot();
+                if(destination.equals("game"))
+                    Game.getInstance(root).isActive(true);
             }
         });
 

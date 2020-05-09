@@ -21,12 +21,10 @@ public class Player extends Sprite
     {
         switch(code)
         {
-            case A:
             case KP_LEFT:
             case LEFT:
                 this.dx = -1 * SPRITE_MOVEMENT_DELTA_DEFAULT;
                 break;
-            case D:
             case KP_RIGHT:
             case RIGHT:
                 this.dx = SPRITE_MOVEMENT_DELTA_DEFAULT;
@@ -39,6 +37,11 @@ public class Player extends Sprite
     public void setDirection()
     {
         this.dx = 0;
+    }
+
+    public double getDX()
+    {
+        return this.dx;
     }
 
     @Override

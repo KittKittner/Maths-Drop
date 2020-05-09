@@ -24,6 +24,7 @@ public class Game
                     addToAll(eqn);
                 }
 
+                //on-update
                 for (GameObject obj : goList) {
                     obj.update();
                 }
@@ -31,30 +32,29 @@ public class Game
                 //post-update
                 checkCollisions();
             }
-            else
-                setActive(false);
         }
     };
 
     public void checkCollisions()
     {
-        for(GameObject obj : goList)
+        for(GameObject obj : goList) //for each relevant object in the game
         {
             if (obj instanceof Player)
             {
-                Rectangle playerBounds = ((Player) obj).getBounds();
+                Rectangle playerBounds = ((Player) obj).getBounds(); //get the current bounds/dimensions of the player
                 for (GameObject collTest : goList)
                 {
                     Rectangle collBounds = null;
                     if(collTest instanceof Sprite)
-                        collBounds = ((Sprite) collTest).getBounds();
-                    if (collTest instanceof Equation && playerBounds.intersects(collBounds.getBoundsInParent()))
+                        collBounds = ((Sprite) collTest).getBounds(); //get the current bounds/dimesions of the sprite
+                    if (collTest instanceof Equation && playerBounds.intersects(collBounds.getBoundsInParent())) //check if the bounds of the player and the sprite overlap
                     {
                         removeFromAll(collTest);
                         score += 1;
                         for(Object text : root.getChildren())
                             if(text instanceof Text)
                             {
+                                //on collision of the player and an equation
                                 ((Text) text).setText("Score: " + score);
                             }
                     }
@@ -62,7 +62,7 @@ public class Game
             }
             else if(obj instanceof Equation)
             {
-                if(((Sprite) obj).getSprite().getLayoutY() > 800)
+                if(((Sprite) obj).getSprite().getLayoutY() > 800) //check if the equation is out of stage-bounds, delete if so
                     removeFromAll(obj);
             }
         }
@@ -99,7 +99,7 @@ public class Game
     }
 
 
-    public void setActive(boolean state)
+    public void isActive(boolean state)
     {
         isGameActive = state;
     }
@@ -114,8 +114,8 @@ public class Game
         this.root = group;
         score = 0;
         root.getChildren().add((new Textual(100, 100, "Score: 0")).getText());
-        setActive(true);
-        //gameTimer.start();
+        isActive(false);
+        gameTimer.start();
     }
 
     public static Game getInstance(Group group)

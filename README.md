@@ -23,3 +23,5 @@ count) but you cannot gain any grades if you have negative score.
  I would also advise choosing an easier difficulty, wherever possible.
  
  ###Happy solving! 
+ 
+ Ryan, a.k.a Kittner

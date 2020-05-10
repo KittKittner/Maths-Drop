@@ -76,17 +76,12 @@ public class Equation extends Sprite
     }
 
     @Override
-    public void update()
+    public String toString() //create output string for any length of equation
     {
-        super.update();
+        String out = "Equation: " + operands[0];
+        for(int i = 0; i < operators.length; i++)
+            out = out.concat("" + operators[i] + operands[i+1]);
 
-        if(this.y > 800)
-            this.y = 800;
-    }
-
-    @Override
-    public String toString()
-    {
-        return "Equation: " + operands[0] + operators[0] + operands[1];
+        return out;
     }
 }

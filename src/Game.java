@@ -9,6 +9,7 @@ import java.io.FileNotFoundException;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.List;
 import java.util.Scanner;
 
 public class Game
@@ -18,7 +19,6 @@ public class Game
     static boolean isGameActive;
     int score;
     Group root;
-    ArrayList<Node> listAll = new ArrayList<Node>();
     ArrayList<GameObject> goList = new ArrayList<GameObject>();
     AnimationTimer gameTimer = new AnimationTimer() {
         @Override
@@ -44,6 +44,7 @@ public class Game
     //TODO: time and space complexity can probably be greatly reduced here by creating definitions beforehand and reducing nested for loops?
     public void checkCollisions()
     {
+        ArrayList<GameObject> toRemove = new ArrayList<GameObject>();
         for(GameObject obj : goList) //for each relevant object in the game
         {
             if (obj instanceof Player)
@@ -56,7 +57,7 @@ public class Game
                         collBounds = ((Sprite) collTest).getBounds(); //get the current bounds/dimensions of the sprite
                     if (collTest instanceof Equation && playerBounds.intersects(collBounds.getBoundsInParent())) //check if the bounds of the player and the sprite overlap (collision)
                     {
-                        removeFromAll(collTest);
+                        toRemove.add(collTest);
                         System.out.println("Collision with player: removed " + collTest);
                         score += 1;
                         for(Object text : root.getChildren())
@@ -71,9 +72,11 @@ public class Game
             else if(obj instanceof Equation)
             {
                 if(((Sprite) obj).getSprite().getLayoutY() > 800) //check if the equation is out of stage-bounds, delete if so
-                    removeFromAll(obj);
+                    toRemove.add(obj);
             }
         }
+        for(GameObject obj : toRemove) //remove each necessary object
+            removeFromAll(obj);
     }
 
     public void addToAll(GameObject obj)
@@ -98,7 +101,6 @@ public class Game
     public void addToSpriteList(Sprite s)
     {
         goList.add(s);
-        listAll.add(s);
     }
 
     public ArrayList<GameObject> getSpriteList()

@@ -1,6 +1,6 @@
 import javafx.animation.AnimationTimer;
 import javafx.scene.Group;
-import javafx.scene.Node;
+import javafx.scene.media.AudioClip; //AudioClip is used over MediaPlayer to allow for multiple of the same sound at once and as it is only a small file there are no memory advantages to using MediaPlayer
 import javafx.scene.shape.Rectangle;
 import javafx.scene.text.Text;
 
@@ -9,17 +9,19 @@ import java.io.FileNotFoundException;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.List;
 import java.util.Scanner;
 
 public class Game
 {
     static Game instance = null;
     static char difficulty;
+    static int starsIncrement;
     static boolean isGameActive;
     int score;
     Group root;
     ArrayList<GameObject> goList = new ArrayList<GameObject>();
+    AudioClip correctAC = new AudioClip(new File("res/beep4.wav").toURI().toString());
+    AudioClip wrongAC = new AudioClip(new File("res/beep5.wav").toURI().toString());
     AnimationTimer gameTimer = new AnimationTimer() {
         @Override
         public void handle(long l) {
@@ -58,7 +60,8 @@ public class Game
                     if (collTest instanceof Equation && playerBounds.intersects(collBounds.getBoundsInParent())) //check if the bounds of the player and the sprite overlap (collision)
                     {
                         toRemove.add(collTest);
-                        System.out.println("Collision with player: removed " + collTest);
+                        correctAC.play();
+                        System.out.println("Collision with player. Removed " + collTest);
                         score += 1;
                         for(Object text : root.getChildren())
                             if(text instanceof Text)
@@ -98,7 +101,7 @@ public class Game
             root.getChildren().remove(((Textual) obj).getText());
     }
 
-    public void addToSpriteList(Sprite s)
+    public void addToLists(Sprite s)
     {
         goList.add(s);
     }
@@ -151,16 +154,19 @@ public class Game
         System.out.println("Current difficulty: " + difficulty);
     }
 
-    //update values on reentry to the game to prevent mid game changes to make the game easier
+    //update values on reentry to the game to prevent abuse and allow on the go modification
     public static void reInit()
     {
         isActive(true);
         readDifficulty();
+        starsIncrement = difficulty == 'e' ? 1 : difficulty == 'n' ? 2 : difficulty == 'h' ? 3 : 0;
     }
 
     private Game(Group group)
     {
         this.root = group;
+        correctAC.setVolume(0.03);
+        wrongAC.setVolume(0.03);
         readDifficulty();
         score = 0;
         root.getChildren().add((new Textual(100, 100, "Score: 0")).getText());

@@ -80,9 +80,8 @@ public class SceneFactory implements ISceneFactory
                 root.getChildren().addAll(settingsheading, settingsHeader, easyButton, normButton, hardButton);
                 return scene;
             case "game":
-                Game game = Game.getInstance(root);
                 Player player = new Player();
-                game.addToSpriteList(player);
+                Game.getInstance(root).addToLists(player);
 
                 //define key press actions for scene
                 scene.setOnKeyPressed(new EventHandler<KeyEvent>() {
@@ -90,11 +89,11 @@ public class SceneFactory implements ISceneFactory
                     public void handle(KeyEvent keyEvent) {
                         KeyCode code = keyEvent.getCode();
                         if(code.isArrowKey() || code.isKeypadKey()) //move the player
-                            player.setDirection(keyEvent.getCode());
+                            player.setDirection(code);
                         else if(code.equals(KeyCode.P)) //pause tha game
-                            game.isActive(!game.isActive());
+                            Game.isActive(!Game.isActive());
                         else if(code.equals(KeyCode.Q)) { //quit to the menu (preserving the current game state)
-                            game.isActive(false);
+                            Game.isActive(false);
                             stage.setScene(sceneMap.get("main"));
                         }
                     }

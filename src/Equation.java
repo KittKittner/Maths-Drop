@@ -8,14 +8,15 @@ public class Equation extends Sprite
 
     public Equation()
     {
-        this.x = randomNumber(0, 1200);
+        this.width = 150;
+        this.height = 50;
+        this.x = randomNumber(0, 1200-this.width); //prevent off screen spawning
         this.y = 0;
         this.dx = 0;
         this.dy = randomNumber(2, 5);
+        //TODO: add to the number of operands and operators as difficulty increases
         this.operands = new int[]{randomInt(0, 9), randomInt(0, 9)};
         this.operators = new char[]{randomOperator()};
-        this.width = 150;
-        this.height = 50;
         setSprite(composeSprite());
     }
 
@@ -25,8 +26,7 @@ public class Equation extends Sprite
     }
 
     /*
-     * Courtesy of user awwsmm on stackoverflow.com
-     * -> https://stackoverflow.com/questions/7548841/round-a-double-to-3-significant-figures
+     * Courtesy of user awwsmm, https://stackoverflow.com/questions/7548841/round-a-double-to-3-significant-figures
      */
     private static double sfRound(double value, int nSigDig, int dir)
     {
@@ -46,15 +46,15 @@ public class Equation extends Sprite
 
     private double randomNumber(double min, double max)
     {
-        return (Math.random() * ((max - min) + 1)) + min;
+        return (Math.random() * ((max - min))) + min;
     }
 
     //TODO: easy difficulty should have no division and any medium difficulty division should be whole numbers only
     private char randomOperator()
     {
-        double operatorMax = Game.getDifficulty() == 'e' ? 2.0d : 3.0d;
+        double operatorMax = Game.getDifficulty() == 'e' ? 3.0d : 4.0d; //if the difficulty is easy then deny the use of division
         double rand = randomNumber(0, operatorMax);
-        System.out.println("" + operatorMax + rand);
+        //System.out.println("" + operatorMax + "\t" +  rand);
         if(rand >= 0.0d && rand < 1.0d)
         {
             return '+';

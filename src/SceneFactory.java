@@ -68,6 +68,15 @@ public class SceneFactory implements ISceneFactory
                 Button normButton = createButton(IV_DIFF_N, 100, 420, 'n');
                 Button hardButton = createButton(IV_DIFF_H, 100, 490, 'h');
 
+                scene.setOnKeyPressed(new EventHandler<KeyEvent>() {
+                    @Override
+                    public void handle(KeyEvent keyEvent) {
+                        KeyCode code = keyEvent.getCode();
+                        if(code.equals(KeyCode.Q))
+                            stage.setScene(sceneMap.get("main"));
+                    }
+                });
+
                 root.getChildren().addAll(settingsheading, settingsHeader, easyButton, normButton, hardButton);
                 return scene;
             case "game":
@@ -132,6 +141,7 @@ public class SceneFactory implements ISceneFactory
         return btn;
     }
 
+    //TODO: the checking of the existence of files here shouldn't be necessary, nut maybe kept as a precaution?
     private void changeValue(char type)
     {
         try {
@@ -189,7 +199,7 @@ public class SceneFactory implements ISceneFactory
                 stage.setScene(sceneMap.get(destination));
                 root = (Group) stage.getScene().getRoot();
                 if(destination.equals("game"))
-                    Game.getInstance(root).isActive(true);
+                    Game.reInit();
             }
         });
 
@@ -233,7 +243,7 @@ public class SceneFactory implements ISceneFactory
     }
 
     /*Courtesy of user IvanRF (https://stackoverflow.com/questions/9677692/getting-my-documents-path-in-java)*/
-    public String getMyDocs()
+    public static String getMyDocs()
     {
         return FileSystemView.getFileSystemView().getDefaultDirectory().getPath();
     }

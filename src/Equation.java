@@ -1,23 +1,31 @@
+import javafx.scene.Node;
 import javafx.scene.image.ImageView;
+import javafx.scene.text.Text;
+
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 
 public class Equation extends Sprite
 {
     private String BASE = "file:res/btnbase.png";
     protected int[] operands;
     protected char[] operators;
+    protected Textual text;
 
     public Equation()
     {
         this.width = 150;
         this.height = 50;
         this.x = randomNumber(0, 1200-this.width); //prevent off screen spawning
-        this.y = 0;
+        this.y = randomNumber(0, 100-this.height);
         this.dx = 0;
-        this.dy = randomNumber(2, 5);
+        this.dy = randomNumber(2, 4);
         //TODO: add to the number of operands and operators as difficulty increases
         this.operands = new int[]{randomInt(0, 9), randomInt(0, 9)};
         this.operators = new char[]{randomOperator()};
         setSprite(composeSprite());
+        this.text = new Textual(x+5, y+5, toString());
     }
 
     private ImageView composeSprite()
@@ -76,9 +84,30 @@ public class Equation extends Sprite
     }
 
     @Override
+    public ArrayList<GameObject> getGameObjects()
+    {
+        return new ArrayList<GameObject>(Arrays.asList(this, this.text));
+    }
+
+    @Override
+    public ArrayList<Node> getDisplayables()
+    {
+        return new ArrayList<Node>(Arrays.asList(this.sprite, this.text.getText()));
+    }
+
+    @Override
+    public void update()
+    {
+        super.update();
+        text.setContent(toString());
+        text.x = x+50;
+        text.y = y+40;
+    }
+
+    @Override
     public String toString() //create output string for any length of equation
     {
-        String out = "Equation: " + operands[0];
+        String out = "" + operands[0];
         for(int i = 0; i < operators.length; i++)
             out = out.concat("" + operators[i] + operands[i+1]);
 

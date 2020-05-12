@@ -1,7 +1,11 @@
+import javafx.scene.Node;
 import javafx.scene.effect.InnerShadow;
 import javafx.scene.paint.Color;
 import javafx.scene.text.Font;
 import javafx.scene.text.Text;
+
+import java.util.ArrayList;
+import java.util.Arrays;
 
 public class Textual extends GameObject
 {
@@ -42,11 +46,27 @@ public class Textual extends GameObject
         this.content = text;
     }
 
+    public String getContent()
+    {
+        return this.content;
+    }
+
+    @Override
+    public ArrayList<GameObject> getGameObjects()
+    {
+        return new ArrayList<GameObject>(Arrays.asList(this));
+    }
+
+    @Override
+    public ArrayList<Node> getDisplayables()
+    {
+        return new ArrayList<Node>(Arrays.asList(this.text));
+    }
+
     @Override
     public void update() {
         text.setX(x);
         text.setY(y);
         text.setText(content);
-        System.out.println(content + "\t" + x + "\t" + y);
     }
 }

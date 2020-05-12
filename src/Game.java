@@ -27,7 +27,7 @@ public class Game
         public void handle(long l) {
             if(isActive()) {
                 //pre-update
-                if(goList.size() <= 10) {
+                if(goList.size() <= 13) {
                     Equation eqn = new Equation();
                     addToAll(eqn);
                 }
@@ -64,7 +64,7 @@ public class Game
                         System.out.println("Collision with player. Removed " + collTest);
                         score += 1;
                         for(Object text : root.getChildren())
-                            if(text instanceof Text)
+                            if(text instanceof Text && ((Text) text).getText().contains("Score:"))
                             {
                                 //on collision of the player and an equation
                                 ((Text) text).setText("Score: " + score);
@@ -84,26 +84,14 @@ public class Game
 
     public void addToAll(GameObject obj)
     {
-        if(obj instanceof Sprite)
-            root.getChildren().add(((Sprite) obj).getSprite());
-        else if(obj instanceof Textual)
-            root.getChildren().add(((Textual) obj).getText());
-
-        goList.add(obj);
+        root.getChildren().addAll(obj.getDisplayables());
+        goList.addAll(obj.getGameObjects());
     }
 
     public void removeFromAll(GameObject obj)
     {
-        goList.remove(obj);
-        if(obj instanceof Sprite)
-            root.getChildren().remove(((Sprite) obj).getSprite());
-        else if(obj instanceof Textual)
-            root.getChildren().remove(((Textual) obj).getText());
-    }
-
-    public void addToLists(Sprite s)
-    {
-        goList.add(s);
+        goList.removeAll(obj.getGameObjects());
+        root.getChildren().removeAll(obj.getDisplayables());
     }
 
     public ArrayList<GameObject> getSpriteList()

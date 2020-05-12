@@ -81,7 +81,6 @@ public class SceneFactory implements ISceneFactory
                 return scene;
             case "game":
                 Player player = new Player();
-                Game.getInstance(root).addToLists(player);
 
                 //define key press actions for scene
                 scene.setOnKeyPressed(new EventHandler<KeyEvent>() {
@@ -96,6 +95,17 @@ public class SceneFactory implements ISceneFactory
                             Game.isActive(false);
                             stage.setScene(sceneMap.get("main"));
                         }
+                        else if(code.equals(KeyCode.C)) //clear the player's answer
+                            player.setAnswer();
+                        else if(code.isDigitKey()) //add a digit to the player's answer
+                            player.addToAnswer(code.getChar());
+                        else if(code.equals(KeyCode.PLUS) || code.equals(KeyCode.ADD))
+                            player.setSign("+");
+                        else if(code.equals(KeyCode.MINUS) || code.equals(KeyCode.SUBTRACT))
+                            player.setSign("-");
+                        else
+                            System.out.println(code.getName());
+
                     }
                 });
                 //define key release actions for scene
@@ -108,7 +118,8 @@ public class SceneFactory implements ISceneFactory
                     }
                 });
 
-                root.getChildren().addAll(player.getSprite());
+                Game.getInstance(root).addToAll(player);
+                //root.getChildren().addAll(player.getDisplayables());
                 return scene;
             case "main":
             default:
@@ -140,7 +151,7 @@ public class SceneFactory implements ISceneFactory
         return btn;
     }
 
-    //TODO: the checking of the existence of files here shouldn't be necessary, nut maybe kept as a precaution?
+    //TODO: the checking of the existence of files here shouldn't be necessary, but maybe kept as a precaution?
     private void changeValue(char type)
     {
         try {

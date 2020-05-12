@@ -1,5 +1,9 @@
+import javafx.scene.Node;
 import javafx.scene.image.ImageView;
 import javafx.scene.shape.Rectangle;
+
+import java.util.ArrayList;
+import java.util.Arrays;
 
 public abstract class Sprite extends GameObject
 {
@@ -34,6 +38,16 @@ public abstract class Sprite extends GameObject
         this.sprite = iv;
         iv.setFitWidth(this.width);
         iv.setFitHeight(this.height);
+    }
+
+    @Override
+    public ArrayList<GameObject> getGameObjects() {
+        return new ArrayList<GameObject>(Arrays.asList(this));
+    }
+
+    @Override
+    public ArrayList<Node> getDisplayables() {
+        return new ArrayList<Node>(Arrays.asList(this.sprite));
     }
 
     @Override

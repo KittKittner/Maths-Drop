@@ -21,10 +21,27 @@ public class Equation extends Sprite
         this.dx = 0;
         this.dy = randomNumber(1, 4);
         //TODO: add to the number of operands and operators as difficulty increases
-        this.operands = new int[]{randomInt(0, 9), randomInt(0, 9)};
-        this.operators = new char[]{randomOperator()};
+        generateRandomEquation();
         setSprite(composeSprite());
         this.text = new Textual(x+5, y+5, toString());
+    }
+
+    private void generateRandomEquation()
+    {
+        this.operands = new int[]{randomInt(0, 19), randomInt(0, 9)};
+        this.operators = new char[]{randomOperator()};
+
+        boolean hasDivision = false;
+        for(char op : operators)
+            if (op == '/') {
+                hasDivision = true;
+                break;
+            }
+
+        if(hasDivision && isNonIntegerAnswer())
+            generateRandomEquation();
+        else if(isTooLarge())
+            generateRandomEquation();
     }
 
     private ImageView composeSprite()
@@ -106,6 +123,20 @@ public class Equation extends Sprite
             }
         }
         return total;
+    }
+
+    public boolean isTooLarge()
+    {
+        return getAnswer() > 999;
+    }
+
+    public boolean isNonIntegerAnswer()
+    {
+        double total = operands[0];
+        for(int i = 0; i < operators.length; i++)
+            total /= operands[i+1];
+
+        return total % 1 != 0;
     }
 
     @Override

@@ -94,11 +94,13 @@ public class SceneFactory implements ISceneFactory
                         else if(code.equals(KeyCode.C)) //clear the player's answer
                             player.setAnswer();
                         else if(code.isDigitKey()) //add a digit to the player's answer
-                            player.addToAnswer(code.getChar());
+                            player.addToAnswer(code.getName());
                         else if(code.equals(KeyCode.PLUS) || code.equals(KeyCode.ADD))
                             player.setSign("+");
                         else if(code.equals(KeyCode.MINUS) || code.equals(KeyCode.SUBTRACT))
                             player.setSign("-");
+                        else if(code.equals(KeyCode.SPACE)) //toggle the sign of the player
+                            player.setSign(" ");
                         else
                             System.out.println(code.getName());
 

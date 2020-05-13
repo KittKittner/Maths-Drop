@@ -2,6 +2,7 @@ import javafx.scene.Node;
 import javafx.scene.image.ImageView;
 import javafx.scene.input.KeyCode;
 
+import javax.swing.*;
 import java.util.ArrayList;
 import java.util.Arrays;
 
@@ -60,7 +61,7 @@ public class Player extends Sprite
 
     public void addToAnswer(String s)
     {
-        if(this.answer.getContent().equals("0"))
+        if(this.answer.getContent().equals("0") || Integer.parseInt(this.answer.getContent()) >=100)
             this.answer.setContent(s);
         else
             this.answer.setContent(this.answer.getContent() + s);
@@ -68,7 +69,15 @@ public class Player extends Sprite
 
     public void setSign(String s)
     {
-        this.sign.setContent(s);
+        if(s.equals(" "))
+        {
+            if (this.sign.getContent().equals("+"))
+                this.sign.setContent("-");
+            else
+                this.sign.setContent("+");
+        }
+        else
+            this.sign.setContent(s);
     }
 
     @Override

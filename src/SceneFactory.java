@@ -1,12 +1,8 @@
-import javafx.animation.AnimationTimer;
 import javafx.event.EventHandler;
 import javafx.scene.Group;
-import javafx.scene.Node;
 import javafx.scene.Scene;
-import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.control.Button;
-import javafx.scene.control.Label;
 import javafx.scene.effect.InnerShadow;
 import javafx.scene.image.ImageView;
 import javafx.scene.input.KeyCode;
@@ -57,7 +53,7 @@ public class SceneFactory implements ISceneFactory
         Group root = new Group();
         this.root = root;
         Scene scene = new Scene(root, 1200, 800);
-        scene.setFill(Color.SKYBLUE);
+        scene.setFill(Color.DARKRED);
 
         switch(type)
         {
@@ -119,7 +115,6 @@ public class SceneFactory implements ISceneFactory
                 });
 
                 Game.getInstance(root).addToAll(player);
-                //root.getChildren().addAll(player.getDisplayables());
                 return scene;
             case "main":
             default:

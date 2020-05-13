@@ -1,10 +1,8 @@
 import javafx.scene.Node;
 import javafx.scene.image.ImageView;
-import javafx.scene.text.Text;
 
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.List;
 
 public class Equation extends Sprite
 {
@@ -20,7 +18,7 @@ public class Equation extends Sprite
         this.x = randomNumber(0, 1200-this.width); //prevent off screen spawning
         this.y = randomNumber(0, 100-this.height);
         this.dx = 0;
-        this.dy = randomNumber(2, 4);
+        this.dy = randomNumber(1, 4);
         //TODO: add to the number of operands and operators as difficulty increases
         this.operands = new int[]{randomInt(0, 9), randomInt(0, 9)};
         this.operators = new char[]{randomOperator()};
@@ -81,6 +79,32 @@ public class Equation extends Sprite
         }
 
         return 'E';
+    }
+
+    public int getAnswer()
+    {
+        int total = operands[0];
+        for(int i = 0; i < operators.length; i++)
+        {
+            switch(operators[i])
+            {
+                case '+':
+                    total += operands[i+1];
+                    break;
+                case '-':
+                    total -= operands[i+1];
+                    break;
+                case '*':
+                    total *= operands[i+1];
+                    break;
+                case '/':
+                    total /= operands[i+1];
+                    break;
+                default:
+                    throw new IllegalArgumentException("Invalid operator found: " + i + "\t" + operators[i]);
+            }
+        }
+        return total;
     }
 
     @Override

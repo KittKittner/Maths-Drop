@@ -1,5 +1,6 @@
 import javafx.animation.AnimationTimer;
 import javafx.scene.Group;
+import javafx.scene.Node;
 import javafx.scene.media.AudioClip; //AudioClip is used over MediaPlayer to allow for multiple of the same sound at once and as it is only a small file there are no memory advantages to using MediaPlayer
 import javafx.scene.shape.Rectangle;
 import javafx.scene.text.Text;
@@ -15,9 +16,11 @@ public class Game
 {
     static Game instance = null;
     static char difficulty;
+    static int starsTotal;
+    static int starsProgress;
     static int starsIncrement;
+    static int score;
     static boolean isGameActive;
-    int score;
     Group root;
     ArrayList<GameObject> goList = new ArrayList<GameObject>();
     AudioClip correctAC = new AudioClip(new File("res/beep4.wav").toURI().toString());
@@ -25,20 +28,27 @@ public class Game
     AnimationTimer gameTimer = new AnimationTimer() {
         @Override
         public void handle(long l) {
-            if(isActive()) {
-                //pre-update
-                if(goList.size() <= 13) {
-                    Equation eqn = new Equation();
-                    addToAll(eqn);
-                }
+            //pre-update
+            if(goList.size() <= 13) {
+                Equation eqn = new Equation();
+                addToAll(eqn);
+            }
 
+            if(isActive()) {
                 //on-update
                 for (GameObject obj : goList) {
                     obj.update();
                 }
-
                 //post-update
                 checkCollisions();
+            }
+            else
+            {
+                for(GameObject obj : goList)
+                {
+                    if(obj instanceof Textual)
+                        obj.update();
+                }
             }
         }
     };
@@ -46,7 +56,7 @@ public class Game
     //TODO: time and space complexity can probably be greatly reduced here by creating definitions beforehand and reducing nested for loops?
     public void checkCollisions()
     {
-        ArrayList<GameObject> toRemove = new ArrayList<GameObject>();
+        ArrayList<GameObject> toRemove = new ArrayList<GameObject>(); //exists to remove the concurrency error
         for(GameObject obj : goList) //for each relevant object in the game
         {
             if (obj instanceof Player)
@@ -60,9 +70,20 @@ public class Game
                     if (collTest instanceof Equation && playerBounds.intersects(collBounds.getBoundsInParent())) //check if the bounds of the player and the sprite overlap (collision)
                     {
                         toRemove.add(collTest);
-                        correctAC.play();
-                        System.out.println("Collision with player. Removed " + collTest);
-                        score += 1;
+                        System.out.println("Collision with player. Removed Equation: " + collTest);
+
+                        //TODO: check the players answer against what should be the answer for the equation and implement right and wrong consequences
+                        //TODO: allow access to the player, via singleton instances probably, or can pass to Game as parameter and global var
+                        if(((Player) obj).getAnswer() == ((Equation) collTest).getAnswer()) {
+                            correctAC.play();
+                            score += 1;
+                            incrementStars();
+                        }
+                        else
+                        {
+                            wrongAC.play();
+                            score -= 1;
+                        }
                         for(Object text : root.getChildren())
                             if(text instanceof Text && ((Text) text).getText().contains("Score:"))
                             {
@@ -82,6 +103,22 @@ public class Game
             removeFromAll(obj);
     }
 
+    public void incrementStars()
+    {
+        starsProgress += starsIncrement;
+        if(starsProgress >= 16)
+        {
+            starsProgress -=16;
+            starsTotal += 1;
+        }
+
+        for(Node obj : root.getChildren())
+        {
+            if(obj instanceof Text && ((Text) obj).getText().contains("Stars:"))
+                ((Text) obj).setText("Stars: " + starsTotal + "(" + starsProgress + "/" + "16)");
+        }
+    }
+
     public void addToAll(GameObject obj)
     {
         root.getChildren().addAll(obj.getDisplayables());
@@ -94,7 +131,7 @@ public class Game
         root.getChildren().removeAll(obj.getDisplayables());
     }
 
-    public ArrayList<GameObject> getSpriteList()
+    public ArrayList<GameObject> getGameObjects()
     {
         return goList;
     }
@@ -147,7 +184,7 @@ public class Game
     {
         isActive(true);
         readDifficulty();
-        starsIncrement = difficulty == 'e' ? 1 : difficulty == 'n' ? 2 : difficulty == 'h' ? 3 : 0;
+        starsIncrement = difficulty == 'e' ? 2 : difficulty == 'n' ? 4 : difficulty == 'h' ? 8 : 0;
     }
 
     private Game(Group group)
@@ -158,6 +195,7 @@ public class Game
         readDifficulty();
         score = 0;
         root.getChildren().add((new Textual(100, 100, "Score: 0")).getText());
+        root.getChildren().add((new Textual(100, 150, "Stars: " + starsTotal + "(" + starsProgress + "/" + "16)")).getText());
         isActive(false);
         gameTimer.start();
     }

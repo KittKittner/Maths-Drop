@@ -1,5 +1,6 @@
 import javafx.application.Application;
 import javafx.scene.Scene;
+import javafx.scene.image.Image;
 import javafx.stage.Stage;
 
 import java.util.HashMap;
@@ -8,6 +9,7 @@ public class Main extends Application
 {
     HashMap<String, Scene> sceneMap = new HashMap<String, Scene>();
     SceneFactory sf;
+    final String ICON = "file:res/icon.png";
 
 
     public static void main(String[] args)
@@ -23,6 +25,7 @@ public class Main extends Application
 
 
         //stage init
+        stage.getIcons().add(new Image(ICON));
         stage.setScene(sceneMap.get("main"));
         stage.setResizable(false);
         stage.setTitle("Maths Drop!");

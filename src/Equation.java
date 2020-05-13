@@ -1,5 +1,6 @@
 import javafx.scene.Node;
 import javafx.scene.image.ImageView;
+import javafx.scene.text.Text;
 
 import java.util.ArrayList;
 import java.util.Arrays;

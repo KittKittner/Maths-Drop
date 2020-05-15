@@ -9,7 +9,7 @@ public class Main extends Application
 {
     HashMap<String, Scene> sceneMap = new HashMap<String, Scene>();
     SceneFactory sf;
-    final String ICON = "file:res/icon.png";
+    final String ICON = getClass().getResource("icon.png").toString();
 
 
     public static void main(String[] args)

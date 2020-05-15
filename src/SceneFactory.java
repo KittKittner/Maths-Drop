@@ -1,7 +1,6 @@
 import javafx.event.EventHandler;
 import javafx.scene.Group;
 import javafx.scene.Scene;
-import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.control.Button;
 import javafx.scene.effect.InnerShadow;
 import javafx.scene.image.ImageView;
@@ -22,15 +21,14 @@ import java.util.HashMap;
 public class SceneFactory implements ISceneFactory
 {
     protected Stage stage;
-    protected GraphicsContext gc;
     protected Group root;
     protected HashMap<String, Scene> sceneMap;
 
-    protected ImageView IV_PLAY_MAIN = new ImageView("file:res/play.png");
-    protected ImageView IV_SETTINGS_MAIN = new ImageView("file:res/settings.png");
-    protected ImageView IV_DIFF_E = new ImageView("file:res/easydiff.png");
-    protected ImageView IV_DIFF_N = new ImageView("file:res/normdiff.png");
-    protected ImageView IV_DIFF_H = new ImageView("file:res/harddiff.png");
+    protected ImageView IV_PLAY_MAIN = new ImageView(getClass().getResource("play.png").toString());
+    protected ImageView IV_SETTINGS_MAIN = new ImageView(getClass().getResource("settings.png").toString());
+    protected ImageView IV_DIFF_E = new ImageView(getClass().getResource("easydiff.png").toString());
+    protected ImageView IV_DIFF_N = new ImageView(getClass().getResource("normdiff.png").toString());
+    protected ImageView IV_DIFF_H = new ImageView(getClass().getResource("harddiff.png").toString());
 
     public SceneFactory(Stage stage)
     {
@@ -121,10 +119,17 @@ public class SceneFactory implements ISceneFactory
             case "main":
             default:
                 Text mainHeading = createHeading("Welcome to Maths Drop!", 100, 100);
+                Text quitHeading = createSmallHeading("Q: Quit back to the main menu", 100, 500);
+                Text pauseHeading = createSmallHeading("P: Pause/resume the game", 100, 550);
+                Text clearHeading = createSmallHeading("C: Clear your answer", 100, 600);
+                Text movementHeading = createSmallHeading("<- and ->: Move the player left and right", 100, 650);
+                Text signHeading = createSmallHeading("Spacebar: Toggle your current sign", 100, 700);
+                Text digitHeading = createSmallHeading("Press any non numpad number to add the digit to your answer", 100, 750);
+
                 Button playbtn = createButton(IV_PLAY_MAIN, 450, 350, 256, 64, "game");
                 Button settingsbtn = createButton(IV_SETTINGS_MAIN, 1064, 668, 128, 128, "settings");
 
-                root.getChildren().addAll(mainHeading, playbtn, settingsbtn);
+                root.getChildren().addAll(mainHeading, playbtn, settingsbtn, quitHeading, pauseHeading, clearHeading, movementHeading, signHeading, digitHeading);
                 return scene;
         }
     }

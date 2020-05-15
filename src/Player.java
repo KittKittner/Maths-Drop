@@ -2,13 +2,12 @@ import javafx.scene.Node;
 import javafx.scene.image.ImageView;
 import javafx.scene.input.KeyCode;
 
-import javax.swing.*;
 import java.util.ArrayList;
 import java.util.Arrays;
 
 public class Player extends Sprite
 {
-    final String SPRITE_PLAYER = "file:res/player.png";
+    final String SPRITE_PLAYER = getClass().getResource("player.png").toString();
     Textual sign;
     Textual answer;
 
@@ -81,15 +80,16 @@ public class Player extends Sprite
     }
 
     @Override
-    public ArrayList<GameObject> getGameObjects()
-    {
-        return new ArrayList<GameObject>(Arrays.asList(this, this.sign, this.answer));
+    public ArrayList<GameObject> getGameObjects() {
+        return new ArrayList<GameObject>(
+                Arrays.asList(this, this.sign, this.answer));
     }
 
     @Override
     public ArrayList<Node> getDisplayables()
     {
-        return new ArrayList<Node>(Arrays.asList(this.sprite, this.sign.getText(), this.answer.getText()));
+        return new ArrayList<Node>(
+                Arrays.asList(this.sprite, this.sign.getText(), this.answer.getText()));
     }
 
     @Override

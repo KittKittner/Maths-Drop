@@ -1,13 +1,12 @@
 import javafx.scene.Node;
 import javafx.scene.image.ImageView;
-import javafx.scene.text.Text;
 
 import java.util.ArrayList;
 import java.util.Arrays;
 
 public class Equation extends Sprite
 {
-    private String BASE = "file:res/btnbase.png";
+    private String BASE = getClass().getResource("btnbase.png").toString();
     protected int[] operands;
     protected char[] operators;
     protected Textual text;
@@ -17,9 +16,9 @@ public class Equation extends Sprite
         this.width = 150;
         this.height = 50;
         this.x = randomNumber(0, 1200-this.width); //prevent off screen spawning
-        this.y = randomNumber(0, 100-this.height);
+        this.y = randomNumber(0, 100-this.height); //for a sleight variation in spawning height
         this.dx = 0;
-        this.dy = randomNumber(1, 4);
+        this.dy = randomNumber(1.5d, 4);
         //TODO: add to the number of operands and operators as difficulty increases
         generateRandomEquation();
         setSprite(composeSprite());
@@ -125,12 +124,12 @@ public class Equation extends Sprite
         return total;
     }
 
-    public boolean isTooLarge()
+    private boolean isTooLarge()
     {
         return getAnswer() > 999;
     }
 
-    public boolean isNonIntegerAnswer()
+    private boolean isNonIntegerAnswer()
     {
         double total = operands[0];
         for(int i = 0; i < operators.length; i++)

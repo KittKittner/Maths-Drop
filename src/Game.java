@@ -9,7 +9,10 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.net.URI;
+import java.net.URISyntaxException;
 import java.util.ArrayList;
+import java.util.Objects;
 import java.util.Scanner;
 
 public class Game
@@ -23,8 +26,8 @@ public class Game
     static boolean isGameActive;
     Group root;
     ArrayList<GameObject> goList = new ArrayList<GameObject>();
-    AudioClip correctAC = new AudioClip(new File("res/beep4.wav").toURI().toString());
-    AudioClip wrongAC = new AudioClip(new File("res/beep5.wav").toURI().toString());
+    AudioClip correctAC = new AudioClip(getClass().getResource("beep4.wav").toString());
+    AudioClip wrongAC = new AudioClip(getClass().getResource("beep5.wav").toString());
     AnimationTimer gameTimer = new AnimationTimer() {
         @Override
         public void handle(long l) {
@@ -54,7 +57,7 @@ public class Game
     };
 
     //TODO: time and space complexity can probably be greatly reduced here by creating definitions beforehand and reducing nested for loops?
-    public void checkCollisions()
+    private void checkCollisions()
     {
         ArrayList<GameObject> toRemove = new ArrayList<GameObject>(); //exists to remove the concurrency error
         for(GameObject obj : goList) //for each relevant object in the game
@@ -103,7 +106,7 @@ public class Game
             removeFromAll(obj);
     }
 
-    public void incrementStars()
+    private void incrementStars()
     {
         starsProgress += starsIncrement;
         if(starsProgress >= 16)
@@ -129,11 +132,6 @@ public class Game
     {
         goList.removeAll(obj.getGameObjects());
         root.getChildren().removeAll(obj.getDisplayables());
-    }
-
-    public ArrayList<GameObject> getGameObjects()
-    {
-        return goList;
     }
 
     public static char getDifficulty()
@@ -187,8 +185,7 @@ public class Game
         starsIncrement = difficulty == 'e' ? 2 : difficulty == 'n' ? 4 : difficulty == 'h' ? 8 : 0;
     }
 
-    private Game(Group group)
-    {
+    private Game(Group group) {
         this.root = group;
         correctAC.setVolume(0.03);
         wrongAC.setVolume(0.03);

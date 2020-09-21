@@ -1,7 +1,7 @@
 # Maths-Drop
 This is a small project taken up as part of my Design Patterns coursework in my second 
 year of studying Computer Science at the University of Salford.
-##Goal of the Game
+## Goal of the Game
 The aim is to collect as many points as possible by inputting the correct answer to the 
 falling equations. \
 To do so, you must type in your answer so it appears on your player and then collide 
